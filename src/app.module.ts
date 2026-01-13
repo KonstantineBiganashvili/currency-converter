@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configuration, validate } from './config';
 import { LoggerModule } from './logger';
+import { HealthModule } from './health';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LoggerModule } from './logger';
       validate,
     }),
     LoggerModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
