@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import { LoggerService } from '@nestjs/common';
 
 import { AppModule } from './app.module';
 
@@ -12,7 +12,7 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
-  const logger = app.get<Logger>(WINSTON_MODULE_NEST_PROVIDER);
+  const logger = app.get<LoggerService>(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
 
   const configService = app.get(ConfigService);
