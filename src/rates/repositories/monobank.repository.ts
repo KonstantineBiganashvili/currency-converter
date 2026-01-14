@@ -8,7 +8,14 @@ import axiosRetry from 'axios-retry';
 
 import { MonobankRate } from '../interfaces';
 import { RatesRepository } from './rates.repository.interface';
-import { ExternalApiException, ExternalApiTimeoutException } from '../../common';
+import {
+  ExternalApiException,
+  ExternalApiTimeoutException,
+  CircuitBreakerService,
+  CircuitBreakerOpenException,
+} from '../../common';
+
+const CIRCUIT_BREAKER_NAME = 'monobank-api';
 
 @Injectable()
 export class MonobankRepository implements RatesRepository {
@@ -17,6 +24,7 @@ export class MonobankRepository implements RatesRepository {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly circuitBreaker: CircuitBreakerService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {
     this.apiUrl =
@@ -39,6 +47,14 @@ export class MonobankRepository implements RatesRepository {
   }
 
   async fetchRates(): Promise<MonobankRate[]> {
+    return this.circuitBreaker.execute(CIRCUIT_BREAKER_NAME, () => this.doFetchRates(), {
+      failureThreshold: 5,
+      successThreshold: 2,
+      timeout: 30000,
+    });
+  }
+
+  private async doFetchRates(): Promise<MonobankRate[]> {
     try {
       this.logger.debug('Fetching rates from Monobank API');
 
@@ -52,6 +68,10 @@ export class MonobankRepository implements RatesRepository {
 
       return response.data;
     } catch (error) {
+      if (error instanceof CircuitBreakerOpenException) {
+        throw error;
+      }
+
       if (error instanceof Error && error.message.includes('timeout')) {
         throw new ExternalApiTimeoutException('Monobank');
       }

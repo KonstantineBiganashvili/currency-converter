@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.4",
     "@nestjs/terminus": "^11.0.0",
+    "@nestjs/throttler": "^6.5.0",
     "axios": "^1.13.2",
     "axios-retry": "^4.5.0",
     "cache-manager": "^7.2.8",
