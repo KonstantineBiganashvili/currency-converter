@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { configuration, validate } from './config';
 import { LoggerModule } from './logger';
 import { HealthModule } from './health';
+import { CurrencyModule } from './currency';
 import { HttpExceptionFilter } from './common';
 
 @Module({
@@ -18,10 +17,9 @@ import { HttpExceptionFilter } from './common';
     }),
     LoggerModule,
     HealthModule,
+    CurrencyModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

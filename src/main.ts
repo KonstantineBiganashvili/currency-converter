@@ -20,6 +20,18 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
+  app.enableCors({
+    origin: [
+      'http://localhost',
+      'http://localhost:3000',
+      'http://127.0.0.1',
+      'http://127.0.0.1:3000',
+      'https://currency-converter.biganashvili.dev',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Currency Converter API')
     .setDescription('API for converting currencies using Monobank exchange rates')
